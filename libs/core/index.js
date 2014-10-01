@@ -40,6 +40,10 @@ function handleTemplateLoading(tag, callbackOnError) {
 					tag.innerHTML = response;
 				}
 				
+				if (tag.dataset["onload"] !== undefined) {
+					eval(tag.dataset["onload"]);
+				}
+				
 				handleWidgetLoading(tag, callbackOnError);
 				loadTemplates(callbackOnError, tag);
 			}
