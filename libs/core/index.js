@@ -3,7 +3,9 @@ var widgetsHandler = "ssi/widgets.php";
 
 head.load(["libs/prototype.js", "libs/transparency.js", "libs/markdown.js"], function() {
 	"use strict";
-	loadTemplates();
+	loadTemplates(function(error) {
+		console.log("Error: ", error);
+	});
 });
 
 function loadTemplates(callbackOnError, parentTag) {
@@ -21,7 +23,6 @@ function loadTemplates(callbackOnError, parentTag) {
 	for (i = 0; i < values.length; i++) {
 		if (values[i].dataset["handled"] === undefined) {
 			handleTemplateLoading(values[i], callbackOnError);
-			values[i].dataset["handled"] = true;
 		}
 	}
 }
@@ -46,6 +47,8 @@ function handleTemplateLoading(tag, callbackOnError) {
 				
 				handleWidgetLoading(tag, callbackOnError);
 				loadTemplates(callbackOnError, tag);
+				
+				tag.dataset["handled"] = true;
 			}
 		});
 	} else {
@@ -61,17 +64,22 @@ function reloadWidgets(callbackOnError) {
 	
 	for (i = 0; i < values.length; i++) {
 		handleTemplateLoading(values[i], callbackOnError);
-		values[i].dataset["handled"] = true;
 	}
 }
 
 function handleWidgetLoading(tag, callbackOnError) {
 	if (tag.dataset["widget"] !== undefined) {
+		params = {
+			name: tag.dataset["widget"]
+		};
+	
+		if (tag.dataset["widgetParams"] !== undefined) {
+			eval(tag.dataset["widgetParams"]);
+		}
+	
 		new Ajax.Request(widgetsHandler, {
 			method: "post",
-			parameters: {
-				name: tag.dataset["widget"]
-			},
+			parameters: params,
 			onFailure: callbackOnError,
 			onSuccess: function(transport) {
 				var data = JSON.parse(transport.responseText);
