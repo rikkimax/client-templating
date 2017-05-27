@@ -1,7 +1,10 @@
+
+text/x-generic index.js ( ASCII text )
+
 var templatesPath = "templates/";
 var widgetsHandler = "ssi/widgets.php";
 
-head.load(["libs/prototype.js", "libs/transparency.js", "libs/markdown.js"], function() {
+head.load(["libs/prototype.js", "libs/transparency.js", "libs/markdown.js", "libs/form.js", "libs/sortable.js", "libs/ifb.js"], function() {
 	"use strict";
 	loadTemplates(function(error) {
 		console.log("Error: ", error);
@@ -19,9 +22,9 @@ function loadTemplates(callbackOnError, parentTag) {
 	} else {
 		values = parentTag.select(".template");
 	}
-	
-	for (i = 0; i < values.length; i++) {
-		if (values[i].dataset["handled"] === undefined) {
+
+	for (i = 0; i < values.length; i += 1) {
+		if (values[i].dataset["handled"] === undefined || values[i].dataset["handled"] == "false") {
 			handleTemplateLoading(values[i], callbackOnError);
 		}
 	}
@@ -40,11 +43,11 @@ function handleTemplateLoading(tag, callbackOnError) {
 				} else {
 					tag.innerHTML = response;
 				}
-				
+
 				if (tag.dataset["onload"] !== undefined) {
 					eval(tag.dataset["onload"]);
 				}
-				
+
 				handleWidgetLoading(tag, callbackOnError);
 				loadTemplates(callbackOnError, tag);
 				
@@ -76,7 +79,7 @@ function handleWidgetLoading(tag, callbackOnError) {
 		if (tag.dataset["widgetParams"] !== undefined) {
 			eval(tag.dataset["widgetParams"]);
 		}
-	
+
 		new Ajax.Request(widgetsHandler, {
 			method: "post",
 			parameters: params,
@@ -90,5 +93,24 @@ function handleWidgetLoading(tag, callbackOnError) {
 				}
 			}
 		});
+		
+		if (tag.dataset["onload"] !== undefined) {
+			eval(tag.dataset["onload"]);
+		}
 	}
+}
+
+function reloadTemplate(container, to) {
+    console.log("reloadTemplate");
+    console.log(container);
+    console.log(container.parentNode);
+    
+    if (to !== undefined) {
+        container.dataset["template"] = to;
+    }
+
+    container.dataset["handled"] = false;
+    container.innerHTML = "";
+
+    loadTemplates(null, container.parentNode);
 }
