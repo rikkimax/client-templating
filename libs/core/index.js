@@ -1,6 +1,3 @@
-
-text/x-generic index.js ( ASCII text )
-
 var templatesPath = "templates/";
 var widgetsHandler = "ssi/widgets.php";
 
