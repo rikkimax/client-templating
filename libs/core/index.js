@@ -1,7 +1,7 @@
 var templatesPath = "templates/";
 var widgetsHandler = "ssi/widgets.php";
 
-head.load(["libs/prototype.js", "libs/transparency.js", "libs/markdown.js", "libs/form.js", "libs/sortable.js", "libs/ifb.js"], function() {
+head.load(["libs/prototype.js", "libs/transparency.js", "libs/markdown.js"], function() {
 	"use strict";
 	loadTemplates(function(error) {
 		console.log("Error: ", error);
